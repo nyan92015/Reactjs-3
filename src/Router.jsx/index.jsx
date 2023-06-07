@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import SignUp from "../Components/SignUp";
 import Login from "../Components/Login";
 import Home from "../Components/Home";
+import SignUp from "../Components/SignUp";
 import { useSelector } from "react-redux";
 
 const Router = () => {
