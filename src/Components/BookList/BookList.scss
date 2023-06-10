@@ -1,0 +1,13 @@
+.booklist {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.book {
+  list-style-type: none;
+  height: 30vh;
+  width: 30vw;
+  margin-top: 20px;
+  margin-left: 2.5vw;
+  background-color: #fdf5e6;
+}

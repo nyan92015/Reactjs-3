@@ -1,29 +1,30 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { url } from "../const";
-import { Navigate, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { url } from "../../const";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../authSlice";
+import { signIn } from "../../authSlice";
+import "./Login.scss";
 
-const SignUp = () => {
+const Login = () => {
   const auth = useSelector((state) => state.auth.isSignIn);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSignUp = (data) => {
-    console.log(`https://${url}/users`);
+  const onLogin = (data) => {
+    console.log(data.email, data.password);
     axios
-      .post(`https://${url}/users`, {
-        name: data.name,
+      .post(`https://${url}/signin`, {
         email: data.email,
         password: data.password,
       })
@@ -31,28 +32,23 @@ const SignUp = () => {
         const token = res.data.token;
         setCookie("token", token);
         dispatch(signIn());
-        navigate("/");
       })
       .catch((err) => {
-        setErrorMessage(`サインアップに失敗しました。${err}`);
+        setErrorMessage(`ログインに失敗しました。${err}`);
       });
-
-    if (auth) return <Navigate to="/" />;
   };
 
+  if (auth) return <Navigate to="/" />;
+
   return (
-    <div className="signup">
-      <h1>新規作成</h1>
-      <p className="error-message">{errorMessage}</p>
-      <form data-testid="form" onSubmit={handleSubmit(onSignUp)}>
-        <input
-          type="name"
-          {...register("name", {
-            required: "ユーザーネームを入力してください。",
-          })}
-          placeholder="UserName"
-          data-testid="input-username"
-        />
+    <div className="login">
+      <h1 className="login__title">ログイン</h1>
+      <p className="login__error-message">{errorMessage}</p>
+      <form
+        className="login__form"
+        data-testid="form"
+        onSubmit={handleSubmit(onLogin)}
+      >
         <input
           type="email"
           {...register("email", {
@@ -83,10 +79,11 @@ const SignUp = () => {
           <span className="error">{errors.password.message}</span>
         )}
 
-        <button type="submit">Submit</button>
+        <button type="submit">ログイン</button>
       </form>
+      <Link to="/signup">新規作成</Link>
     </div>
   );
 };
 
-export default SignUp;
+export default Login;

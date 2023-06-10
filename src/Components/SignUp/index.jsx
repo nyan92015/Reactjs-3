@@ -1,48 +1,80 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { url } from "../../const";
+import { Navigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { url } from "../const";
-import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../authSlice";
+import { signIn } from "../../authSlice";
+import "./SignUp.scss";
+import RisizeFile from "../ResizeFile";
 
-const Login = () => {
+const SignUp = () => {
   const auth = useSelector((state) => state.auth.isSignIn);
   const dispatch = useDispatch();
   const [cookies, setCookie, removeCookie] = useCookies();
-  const navigate = useNavigate();
+  const [blob, setBlob] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onLogin = (data) => {
+  const onFileUpload = async (token) => {
+    const formData = new FormData();
+    formData.append("icon", blob);
+    await axios
+      .post(`https://${url}/uploads`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(`success to Upload Icon. ${res}`);
+      })
+      .catch((err) => {
+        window.alert(`画像のアップロードに失敗しました。${err}`);
+      });
+  };
+
+  const onSignUp = async (data) => {
     axios
       .post(`https://${url}/users`, {
+        name: data.name,
         email: data.email,
         password: data.password,
       })
-      .then((res) => {
+      .then(async (res) => {
         const token = res.data.token;
         setCookie("token", token);
+        onFileUpload(token);
         dispatch(signIn());
-        navigate("/");
       })
       .catch((err) => {
-        setErrorMessage(`ログインに失敗しました。${err}`);
+        setErrorMessage(`サインアップに失敗しました。${err}`);
       });
   };
 
   if (auth) return <Navigate to="/" />;
-
   return (
-    <div className="login">
-      <p className="error-message">{errorMessage}</p>
-      <form data-testid="form" onSubmit={handleSubmit(onLogin)}>
+    <div className="signup">
+      <h1 className="signup__title">新規作成</h1>
+      <p className="signup__error-message">{errorMessage}</p>
+      <form
+        className="signup__form"
+        data-testid="form"
+        onSubmit={handleSubmit(onSignUp)}
+      >
+        <input
+          type="name"
+          {...register("name", {
+            required: "ユーザーネームを入力してください。",
+          })}
+          placeholder="UserName"
+          data-testid="input-username"
+        />
+
         <input
           type="email"
           {...register("email", {
@@ -73,11 +105,12 @@ const Login = () => {
           <span className="error">{errors.password.message}</span>
         )}
 
-        <button type="submit">Submit</button>
+        <RisizeFile setBlob={setBlob} />
+
+        <button type="submit">SignUp</button>
       </form>
-      <Link to="/signup">新規作成</Link>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;
