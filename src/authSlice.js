@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Cookies } from "react-cookie";
 
-const cookie = new Cookies();
+const cookie = new Cookies({
+  path: "/",
+});
 
 const initialState = {
   isSignIn: cookie.get("token") != "undefined",

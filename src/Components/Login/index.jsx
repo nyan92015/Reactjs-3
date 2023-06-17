@@ -22,7 +22,6 @@ const Login = () => {
   } = useForm();
 
   const onLogin = (data) => {
-    console.log(data.email, data.password);
     axios
       .post(`https://${url}/signin`, {
         email: data.email,
@@ -82,6 +81,7 @@ const Login = () => {
         <button type="submit">ログイン</button>
       </form>
       <Link to="/signup">新規作成</Link>
+      <Link to="/">書籍一覧を見る</Link>
     </div>
   );
 };

@@ -1,20 +1,16 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { forword, backword } from "../../pageSlice";
-const Pagination = ({ isFirstPage, isLastPage }) => {
-  const dispath = useDispatch();
-
+const Pagination = ({ page, setPage, isLastPage }) => {
   const forwordPage = () => {
-    dispath(forword()); //ページを進める
+    setPage(page + 1); //ページを進める
   };
 
   const backwordPage = () => {
-    dispath(backword()); //ページを戻す
+    setPage(page - 1); //ページを戻す
   };
 
   return (
     <div>
-      {!isFirstPage && <button onClick={backwordPage}>前のページ</button>}
+      {page !== 0 && <button onClick={backwordPage}>前のページ</button>}
       {!isLastPage && <button onClick={forwordPage}>次のページ</button>}
     </div>
   );

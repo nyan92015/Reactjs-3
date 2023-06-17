@@ -1,64 +1,66 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./Header.scss";
 import { useCookies } from "react-cookie";
 import { url } from "../../const";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { signOut } from "../../authSlice";
+import {
+  initializationUserData,
+  setUserIconUrl,
+  setUserName,
+} from "../../userSlice";
 
 const Header = () => {
   const [cookies, removeCookie] = useCookies();
-  const [userData, setUserData] = useState({ name: null, iconUrl: null });
   const auth = useSelector((state) => state.auth.isSignIn);
+  const userData = useSelector((state) => state.user.userData);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const SignOut = () => {
     removeCookie("token");
+    dispatch(initializationUserData());
     dispatch(signOut());
     navigate("/login");
   };
 
-  const getUser = () => {
-    axios
-      .get(`https://${url}/users`, {
+  const getUser = async () => {
+    try {
+      const response = await axios.get(`https://${url}/users`, {
         headers: {
           authorization: `Bearer ${cookies.token}`,
         },
-      })
-      .then((res) => {
-        setUserData(res.data);
-      })
-      .catch((err) => {
-        if (auth === true)
-          window.alert(`ユーザー情報の取得に失敗しました。${err}`);
       });
+
+      dispatch(setUserName(response.data.name));
+      dispatch(setUserIconUrl(response.data.iconUrl));
+    } catch (error) {
+      window.alert(`ユーザー情報の取得に失敗しました。${error}`);
+    }
   };
 
   useEffect(() => {
-    getUser();
-  }, [cookies, userData]);
+    if (location.pathname === "/" && auth) getUser();
+  }, [location]);
+
+  useEffect(() => {
+    if (auth) getUser();
+  }, []);
 
   return (
     <header className="header">
-      <h1 className="header__title">書籍ビューアプリ</h1>
+      <h1 className="header__title">書籍レビューアプリ</h1>
       {auth ? (
         <>
           <Link to="/profile" className="header__user">
-            {userData.iconUrl ? (
-              <img
-                className="header__user__icon"
-                src={userData.iconUrl}
-                alt="アイコン"
-              />
-            ) : (
-              <img
-                className="header__user__icon"
-                src="images/user.png"
-                alt="アイコン"
-              />
-            )}
+            <img
+              className="header__user__icon"
+              src={userData.iconUrl || "images/user.png"}
+              alt="アイコン"
+            />
             <p className="header__user__name">{userData.name}</p>
           </Link>
           <button onClick={SignOut}>ログアウト</button>

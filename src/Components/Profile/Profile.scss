@@ -1,0 +1,27 @@
+.profile {
+  margin-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &__user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &__name {
+      display: block;
+      margin-top: 20px;
+      width: 30vw;
+      height: 5vh;
+    }
+  }
+  &__submit {
+    margin-top: 20px;
+    display: block;
+    width: 30vw;
+    height: 5vh;
+  }
+}
+.back {
+  margin-left: 45vw;
+  color: white;
+}

@@ -6,4 +6,8 @@ $mainColor: #8b4513;
 }
 body {
   background-color: $mainColor;
+  overflow-y: scroll; /* 常にスクロールバーを表示 */
+}
+body::-webkit-scrollbar {
+  width: 0px; /* スクロールバーの幅 */
 }

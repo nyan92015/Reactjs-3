@@ -8,27 +8,27 @@
   align-items: center;
   justify-content: space-around;
 
-  .header__title {
+  &__title {
     color: white;
   }
-  .header__user {
+  &__user {
     text-decoration: none;
     display: flex;
     flex-direction: column;
     align-items: center;
     border-radius: 50%;
-    .header__user__icon {
-      width: 4vw;
-      height: auto;
+    &__icon {
+      width: auto;
+      height: 6vh;
     }
-    .header__user__name {
+    &__name {
       color: white;
     }
   }
-  .header__logOutButton {
+  &__logOutButton {
     color: white;
   }
-  .header__loginButton {
+  &__loginButton {
     color: white;
   }
 }

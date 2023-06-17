@@ -7,7 +7,8 @@ import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../../authSlice";
 import "./SignUp.scss";
-import RisizeFile from "../ResizeFile";
+import ResizeFile from "../ResizeFile";
+import { setUserName } from "../../userSlice";
 
 const SignUp = () => {
   const auth = useSelector((state) => state.auth.isSignIn);
@@ -35,6 +36,9 @@ const SignUp = () => {
       })
       .catch((err) => {
         window.alert(`画像のアップロードに失敗しました。${err}`);
+      })
+      .finally(() => {
+        dispatch(signIn());
       });
   };
 
@@ -49,7 +53,6 @@ const SignUp = () => {
         const token = res.data.token;
         setCookie("token", token);
         onFileUpload(token);
-        dispatch(signIn());
       })
       .catch((err) => {
         setErrorMessage(`サインアップに失敗しました。${err}`);
@@ -105,7 +108,7 @@ const SignUp = () => {
           <span className="error">{errors.password.message}</span>
         )}
 
-        <RisizeFile setBlob={setBlob} />
+        <ResizeFile setBlob={setBlob} />
 
         <button type="submit">SignUp</button>
       </form>
